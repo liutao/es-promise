@@ -2,11 +2,13 @@
 <html>
 <head>
 	<title>测试</title>
-	<script type="text/javascript" src="./dist/es-promise.js"></script>>
+	<script type="text/javascript" src="./dist/es-promise.js"></script>
 </head>
 <body>
 <script type="text/javascript">
-	
+	// new Promise(1).then(function(a){console.log(a)});
+	var p = new Promise(function(resolve,reject){reject(5)});
+	p.then(function(a){console.log(a)},function(a){console.log('reject' + a)} )
 </script>
 </body>
 </html>
