@@ -85,8 +85,9 @@ function dealThen(promise, child, x){
 	}
 }
 
-function noop(){
-}
+// 内部创建Promise对象时使用的空函数
+function noop(){}
+
 class Promise1{
 	constructor(resolver){
 		this._status = PENDING;

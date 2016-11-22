@@ -148,6 +148,7 @@
 		}
 	}
 
+	// 内部创建Promise对象时使用的空函数
 	function noop() {}
 
 	var Promise1 = function () {
