@@ -96,11 +96,11 @@ class Promise1{
 		this._fulfillArr = [];
 		this._rejectArr = [];
 
+		if (resolver == noop) { return};
 		if (!isFunction(resolver)) {
 			throw new TypeError('参数必须为function');
 		};
-		if (resolver == noop) { return};
-		initPromise(this, resolver);
+		this instanceof Promise ? initPromise(this, resolver) : throw new TypeError('Promise不可以直接作为函数调用');
 	}
 	then(onFulfilled, onRejected){
 		let child = new Promise(noop);

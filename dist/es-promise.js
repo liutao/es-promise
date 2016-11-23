@@ -69,7 +69,7 @@
 	function initPromise(promise, resolver) {
 		try {
 			resolver(function (value) {
-				resolve(promise, value);
+				fulfill(promise, value);
 			}, function (reason) {
 				reject(promise, reason);
 			});
