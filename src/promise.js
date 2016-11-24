@@ -7,7 +7,6 @@ import {
 	isObjectOrFunction
 } from './utils';
 
-
 function initPromise(promise, resolver){
 	try {
 		resolver(function(value){
