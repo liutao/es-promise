@@ -62,6 +62,11 @@
 	var FULFILLED = "fulfilled";
 	var REJECTED = "rejected";
 
+	// 异步调用函数的方式，暂时只用setTimeout
+	function asyncCall(fun) {
+		setTimeout(fun, 0);
+	}
+
 	function initPromise(promise, resolver) {
 		try {
 			resolver(function (value) {
@@ -237,11 +242,16 @@
 				}
 				return child;
 			}
+		}, {
+			key: "catch",
+			value: function _catch(onRejected) {
+				return this.then(undefined, onRejected);
+			}
 		}]);
 		return Promise;
 	}();
 
-	window.Promise = Promise;
+	// window.Promise =  Promise;
 
 /***/ },
 /* 1 */

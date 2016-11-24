@@ -7,6 +7,11 @@ import {
 	isObjectOrFunction
 } from './utils';
 
+// 异步调用函数的方式，暂时只用setTimeout
+function asyncCall(fun){
+	setTimeout(fun, 0)
+}
+
 function initPromise(promise, resolver){
 	try {
 		resolver(function(value){
@@ -161,8 +166,12 @@ class Promise{
 		}
 		return child;
 	}
+	catch(onRejected){
+		return this.then(undefined, onRejected);
+	}
 }
 
-window.Promise =  Promise;
+// window.Promise =  Promise;
+
 
 
