@@ -19,22 +19,62 @@ function initPromise(promise, resolver){
 	}
 }
 
+// Promise Resolution Procedure
 function resolve(promise, value){
+	// 2.3.1 如果promise和value指向同一对象
 	if (promise === value) {
 		reject(promise, new TypeError('不可以resolve Promise实例本身'))
+	// 2.3.2 如果value是一个promise
 	} else if (value.constructor == Promise) {
 		if (value._status == FULFILLED) {
 			fulfill(promise, value._result);
 		} else if (value._status == REJECTED) {
 			reject(promise, value._result);
 		} else {
-
+			resolve(promise, value);
 		}
+	// 2.3.3 如果x是一个object或function
 	} else if (isObjectOrFunction(value)){
-
+		try{
+			let then = value.then;
+		} catch (e) {
+			reject(promise, e);
+		}
+		if (isFunction(then)) {
+			try{
+				handleThenable(promise, value, then);
+			} catch (e) {
+				reject(promise, e);
+			}
+		} else {
+			fulfill(promise, value);
+		}
+	// 2.3.4 value不是对象或函数
 	} else {
 		fulfill(promise, value);
 	}
+}
+
+function handleThenable(promise, value, then){
+	// setTimeout(()=>{
+		let settled = false; // 是否fulfilled或rejected
+		try {
+			then.call(value, (otherValue)=>{
+				if (settled) { return};
+				resolve(promise, otherValue);
+				settled = true;
+			}, (reason)=>{
+				if (settled) { return};
+				reject(promise, reason);
+				settled = true;
+			})
+		} catch (e) {
+			if (settled) { return};
+			settled = true;
+			reject(promise, e)
+		}
+		
+	// },0);
 }
 
 function fulfill(promise, value){
@@ -88,7 +128,7 @@ function dealThen(promise, child, x){
 // 内部创建Promise对象时使用的空函数
 function noop(){}
 
-class Promise1{
+class Promise{
 	constructor(resolver){
 		this._status = PENDING;
 		this._result = undefined;
@@ -100,7 +140,11 @@ class Promise1{
 		if (!isFunction(resolver)) {
 			throw new TypeError('参数必须为function');
 		};
-		this instanceof Promise ? initPromise(this, resolver) : throw new TypeError('Promise不可以直接作为函数调用');
+		if (this instanceof Promise) {
+			initPromise(this, resolver)
+		} else {
+			throw new TypeError('Promise不可以直接作为函数调用')
+		}
 	}
 	then(onFulfilled, onRejected){
 		let child = new Promise(noop);
@@ -119,6 +163,6 @@ class Promise1{
 	}
 }
 
-window.Promise =  Promise1;
+window.Promise =  Promise;
 
 
