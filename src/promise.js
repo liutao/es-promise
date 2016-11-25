@@ -252,7 +252,9 @@ Promise.race = function(arr){
 	}
 	return newPormise;
 }
-window.Promise = Promise;
+Promise.a = 'gag';
 
+global.Promise1 = Promise
+// module.exports = Promise
 
 

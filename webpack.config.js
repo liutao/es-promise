@@ -1,10 +1,12 @@
 var webpack = require('webpack')
 
 module.exports = {
-  entry: './src/promise.js',
+  entry: {
+    'promise': './src/promise'
+  },
   output: {
     path: './dist/',
-    filename: 'es-promise.js'
+    filename: '[name].js'
   },
   module: {
     loaders: [
