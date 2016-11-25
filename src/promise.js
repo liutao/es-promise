@@ -88,13 +88,11 @@ function fulfill(promise, value){
 	promise._result = value;
 	promise._status = FULFILLED;
 
-	this._fulfillArr.forEach((k,index)=>{
-		if (isFunction(k)) {
-			this._childArr[index]._result = k(promise._result);
-		} else {
-			this._childArr[index]._result = value;
-		}
-	})
+	this._fulfillArr.forEach(
+		asyncCall((k,index)=>{
+			dealThen(promise, this._childArr[index], k);
+		})
+	)
 }
 
 function reject(promise, reason){
@@ -104,11 +102,9 @@ function reject(promise, reason){
 	promise._status = REJECTED;
 
 	this._rejectArr.forEach((k,index)=>{
-		if (isFunction(k)) {
-			this._childArr[index]._result = k(promise._result);
-		} else {
-			this._childArr[index]._result = value;
-		}
+		asyncCall((k,index)=>{
+			dealThen(promise, this._childArr[index], k);
+		})
 	})
 }
 // 写一个函数统一处理
@@ -117,8 +113,9 @@ function reject(promise, reason){
 function dealThen(promise, child, x){
 	if (isFunction(x)) {
 		try{
+			let value = x(promise._result)
 			if (promise._status == FULFILLED) {
-				fulfill(child, x(promise._result));
+				resolve(child, x(promise._result));
 			} else {
 				reject(child, x(promise._result));
 			}
@@ -126,7 +123,15 @@ function dealThen(promise, child, x){
 			reject(child, e);
 		}
 	} else {
-		return promise._result;
+		try{
+			if (promise._status == FULFILLED) {
+				fulfill(child, promise._result);
+			} else {
+				reject(child, promise._result);
+			}
+		}catch(e){
+			reject(child, e);
+		}
 	}
 }
 
@@ -155,9 +160,13 @@ class Promise{
 		let child = new Promise(noop);
 		if (this._status !== PENDING) {
 			if (this._status == FULFILLED) {
-				dealThen(this, child, onFulfilled);
+				asyncCall(()=>{
+					dealThen(this, child, onFulfilled);
+				})
 			} else {
-				dealThen(this, child, onRejected);
+				asyncCall(()=>{
+					dealThen(this, child, onRejected);
+				})
 			}
 		} else {
 			this._childArr.push(child);
@@ -171,6 +180,15 @@ class Promise{
 	}
 }
 
+Promise.resolve = function(value){
+	return new Promise(function(resolve){resolve(value)})
+}
+Promise.reject = function(value){
+	return new Promise(function(resolve, reject){reject(value)})
+}
+// Promise.all = function(arr){
+// 	let status = 'pending';
+// }
 // window.Promise =  Promise;
 
 

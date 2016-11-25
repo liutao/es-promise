@@ -153,13 +153,9 @@
 		promise._result = value;
 		promise._status = FULFILLED;
 
-		this._fulfillArr.forEach(function (k, index) {
-			if ((0, _utils.isFunction)(k)) {
-				_this._childArr[index]._result = k(promise._result);
-			} else {
-				_this._childArr[index]._result = value;
-			}
-		});
+		this._fulfillArr.forEach(asyncCall(function (k, index) {
+			dealThen(promise, _this._childArr[index], k);
+		}));
 	}
 
 	function reject(promise, reason) {
@@ -173,11 +169,9 @@
 		promise._status = REJECTED;
 
 		this._rejectArr.forEach(function (k, index) {
-			if ((0, _utils.isFunction)(k)) {
-				_this2._childArr[index]._result = k(promise._result);
-			} else {
-				_this2._childArr[index]._result = value;
-			}
+			asyncCall(function (k, index) {
+				dealThen(promise, _this2._childArr[index], k);
+			});
 		});
 	}
 	// 写一个函数统一处理
@@ -186,8 +180,9 @@
 	function dealThen(promise, child, x) {
 		if ((0, _utils.isFunction)(x)) {
 			try {
+				var value = x(promise._result);
 				if (promise._status == FULFILLED) {
-					fulfill(child, x(promise._result));
+					resolve(child, x(promise._result));
 				} else {
 					reject(child, x(promise._result));
 				}
@@ -195,7 +190,15 @@
 				reject(child, e);
 			}
 		} else {
-			return promise._result;
+			try {
+				if (promise._status == FULFILLED) {
+					fulfill(child, promise._result);
+				} else {
+					reject(child, promise._result);
+				}
+			} catch (e) {
+				reject(child, e);
+			}
 		}
 	}
 
@@ -228,12 +231,18 @@
 		(0, _createClass3.default)(Promise, [{
 			key: "then",
 			value: function then(onFulfilled, onRejected) {
+				var _this3 = this;
+
 				var child = new Promise(noop);
 				if (this._status !== PENDING) {
 					if (this._status == FULFILLED) {
-						dealThen(this, child, onFulfilled);
+						asyncCall(function () {
+							dealThen(_this3, child, onFulfilled);
+						});
 					} else {
-						dealThen(this, child, onRejected);
+						asyncCall(function () {
+							dealThen(_this3, child, onRejected);
+						});
 					}
 				} else {
 					this._childArr.push(child);
@@ -251,6 +260,19 @@
 		return Promise;
 	}();
 
+	Promise.resolve = function (value) {
+		return new Promise(function (resolve) {
+			resolve(value);
+		});
+	};
+	Promise.reject = function (value) {
+		return new Promise(function (resolve, reject) {
+			reject(value);
+		});
+	};
+	// Promise.all = function(arr){
+	// 	let status = 'pending';
+	// }
 	// window.Promise =  Promise;
 
 /***/ },
