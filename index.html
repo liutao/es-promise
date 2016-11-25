@@ -7,8 +7,18 @@
 <body>
 <script type="text/javascript">
 	// new Promise(1).then(function(a){console.log(a)});
-	var p = new Promise(function(resolve,reject){reject(5)});
-	p.then(function(a){console.log(a)},function(a){console.log('reject' + a)} )
+	// var p = new Promise(function(resolve,reject){reject(5)});
+	// // console.log(p);
+	// p.then(function(a){
+	// 	console.log(a)
+	// },function(a){
+	// 	console.log('reject' + a)
+	// } )
+// var p = Promise.resolve(5);
+
+// new Promise(function(resolve,reject){resolve(p)}).then(function(a){console.log('fulfill'+a)},function(a){console.log('reject'+a)})
+
+var a = new Promise(function(resolve){setTimeout(()=>{resolve(55)},3000)}).then(function(a){console.log(a);return 10;}).then(function(b){console.log('2222',b)})
 </script>
 </body>
 </html>

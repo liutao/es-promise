@@ -63,8 +63,8 @@
 	var REJECTED = "rejected";
 
 	// 异步调用函数的方式，暂时只用setTimeout
-	function asyncCall(fun) {
-		setTimeout(fun, 0);
+	function asyncCall(fun, args) {
+		setTimeout(fun.apply(null, args), 0);
 	}
 
 	function initPromise(promise, resolver) {
@@ -85,7 +85,9 @@
 		if (promise === value) {
 			reject(promise, new TypeError('不可以resolve Promise实例本身'));
 			// 2.3.2 如果value是一个promise
-		} else if (value.constructor == Promise) {
+			// value为数字等时，value.constructor会报错
+			// } else if (value.constructor == Promise) {
+		} else if (value instanceof Promise) {
 			if (value._status == FULFILLED) {
 				fulfill(promise, value._result);
 			} else if (value._status == REJECTED) {
@@ -144,8 +146,6 @@
 	}
 
 	function fulfill(promise, value) {
-		var _this = this;
-
 		if (promise._status !== PENDING) {
 			return;
 		};
@@ -153,14 +153,14 @@
 		promise._result = value;
 		promise._status = FULFILLED;
 
-		this._fulfillArr.forEach(asyncCall(function (k, index) {
-			dealThen(promise, _this._childArr[index], k);
-		}));
+		if (promise._rejectArr.length > 0) {
+			promise._fulfillArr.forEach(function (k, index) {
+				asyncCall(dealThen, [promise, promise._childArr[index], k]);
+			});
+		}
 	}
 
 	function reject(promise, reason) {
-		var _this2 = this;
-
 		if (promise._status !== PENDING) {
 			return;
 		};
@@ -168,11 +168,11 @@
 		promise._result = reason;
 		promise._status = REJECTED;
 
-		this._rejectArr.forEach(function (k, index) {
-			asyncCall(function (k, index) {
-				dealThen(promise, _this2._childArr[index], k);
+		if (promise._rejectArr.length > 0) {
+			promise._rejectArr.forEach(function (k, index) {
+				asyncCall(dealThen, [promise, promise._childArr[index], k]);
 			});
-		});
+		};
 	}
 	// 写一个函数统一处理
 
@@ -180,7 +180,7 @@
 	function dealThen(promise, child, x) {
 		if ((0, _utils.isFunction)(x)) {
 			try {
-				var value = x(promise._result);
+				// let value = x(promise._result)
 				if (promise._status == FULFILLED) {
 					resolve(child, x(promise._result));
 				} else {
@@ -231,17 +231,17 @@
 		(0, _createClass3.default)(Promise, [{
 			key: "then",
 			value: function then(onFulfilled, onRejected) {
-				var _this3 = this;
+				var _this = this;
 
 				var child = new Promise(noop);
 				if (this._status !== PENDING) {
 					if (this._status == FULFILLED) {
 						asyncCall(function () {
-							dealThen(_this3, child, onFulfilled);
+							dealThen(_this, child, onFulfilled);
 						});
 					} else {
 						asyncCall(function () {
-							dealThen(_this3, child, onRejected);
+							dealThen(_this, child, onRejected);
 						});
 					}
 				} else {
@@ -273,7 +273,7 @@
 	// Promise.all = function(arr){
 	// 	let status = 'pending';
 	// }
-	// window.Promise =  Promise;
+	window.Promise = Promise;
 
 /***/ },
 /* 1 */
