@@ -9,7 +9,7 @@ import {
 
 // 异步调用函数的方式，暂时只用setTimeout
 function asyncCall(fun,args){
-	setTimeout(fun.apply(null,args), 0)
+	setTimeout(fun.apply(null,args), 500)
 }
 
 function initPromise(promise, resolver){
@@ -23,6 +23,7 @@ function initPromise(promise, resolver){
 		reject(promise, e);
 	}
 }
+
 
 // Promise Resolution Procedure
 function resolve(promise, value){
@@ -44,18 +45,19 @@ function resolve(promise, value){
 	} else if (isObjectOrFunction(value)){
 		try{
 			let then = value.then;
+			if (isFunction(then)) {
+				try{
+					handleThenable(promise, value, then);
+				} catch (e) {
+					reject(promise, e);
+				}
+			} else {
+				fulfill(promise, value);
+			}
 		} catch (e) {
 			reject(promise, e);
 		}
-		if (isFunction(then)) {
-			try{
-				handleThenable(promise, value, then);
-			} catch (e) {
-				reject(promise, e);
-			}
-		} else {
-			fulfill(promise, value);
-		}
+		
 	// 2.3.4 value不是对象或函数
 	} else {
 		fulfill(promise, value);
@@ -87,10 +89,10 @@ function handleThenable(promise, value, then){
 function fulfill(promise, value){
 	if (promise._status !== PENDING) { return };
 
-	promise._result = value;
 	promise._status = FULFILLED;
+	promise._result = value;
 
-	if (promise._rejectArr.length > 0) {
+	if (promise._fulfillArr.length > 0) {
 		promise._fulfillArr.forEach((k,index)=>{
 			asyncCall(dealThen, [promise, promise._childArr[index], k])
 		});
@@ -100,8 +102,8 @@ function fulfill(promise, value){
 function reject(promise, reason){
 	if (promise._status !== PENDING) { return };
 
-	promise._result = reason;
 	promise._status = REJECTED;
+	promise._result = reason;
 
 	if (promise._rejectArr.length > 0) {
 		promise._rejectArr.forEach((k,index)=>{

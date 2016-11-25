@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>测试</title>
-	<script type="text/javascript" src="./dist/es-promise.js"></script>
+	<script type="text/javascript" src="./dist/promise.js"></script>
 </head>
 <body>
 <script type="text/javascript">
@@ -18,7 +18,46 @@
 
 // new Promise(function(resolve,reject){resolve(p)}).then(function(a){console.log('fulfill'+a)},function(a){console.log('reject'+a)})
 
-var a = new Promise(function(resolve){setTimeout(()=>{resolve(55)},3000)}).then(function(a){console.log(a);return 10;}).then(function(b){console.log('2222',b)})
+// var a = new Promise(function(resolve){setTimeout(()=>{resolve(55)},3000)}).then(function(a){console.log(a);return 10;}).then(function(b){console.log('2222',b)})
+function defer(){
+    var dfd = {}
+    dfd.promise = new Promise1(function(resolve, reject) {
+    	dfd.resolve = resolve
+    	dfd.reject = reject
+    })
+    return dfd
+}
+// var d = defer();
+// (function(){
+// 	d.promise.then(function onFulfilled(a) {
+//             console.log(a);
+//         }, function onRejected() {
+//             console.log(false);
+//         });
+// 	setTimeout(()=>{console.log('haha')},100)
+// })()
+
+// d.resolve({ dummy: "dummy" });
+ // var d = defer();
+ //            var isFulfilled = false;
+
+ //            d.promise.then(function onFulfilled() {
+ //                console.log(isFulfilled)
+ //            });
+
+ //            setTimeout(function () {
+ //                d.resolve({ dummy: "dummy" });
+ //                isFulfilled = true;
+ //            }, 50);
+var promise = Promise1.resolve({ dummy: "dummy" }).then(function () {
+			console.log(promise,'gsdg');
+            return promise;
+        });
+		console.log(promise);
+        promise.then(null, function (reason) {
+           console.log(reason);
+        });
+
 </script>
 </body>
 </html>

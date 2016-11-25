@@ -64,7 +64,7 @@
 
 	// 异步调用函数的方式，暂时只用setTimeout
 	function asyncCall(fun, args) {
-		setTimeout(fun.apply(null, args), 0);
+		setTimeout(fun.apply(null, args), 500);
 	}
 
 	function initPromise(promise, resolver) {
@@ -98,19 +98,20 @@
 			// 2.3.3 如果x是一个object或function
 		} else if ((0, _utils.isObjectOrFunction)(value)) {
 			try {
-				var _then = value.then;
+				var then = value.then;
+				if ((0, _utils.isFunction)(then)) {
+					try {
+						handleThenable(promise, value, then);
+					} catch (e) {
+						reject(promise, e);
+					}
+				} else {
+					fulfill(promise, value);
+				}
 			} catch (e) {
 				reject(promise, e);
 			}
-			if ((0, _utils.isFunction)(then)) {
-				try {
-					handleThenable(promise, value, then);
-				} catch (e) {
-					reject(promise, e);
-				}
-			} else {
-				fulfill(promise, value);
-			}
+
 			// 2.3.4 value不是对象或函数
 		} else {
 			fulfill(promise, value);
@@ -150,10 +151,10 @@
 			return;
 		};
 
-		promise._result = value;
 		promise._status = FULFILLED;
+		promise._result = value;
 
-		if (promise._rejectArr.length > 0) {
+		if (promise._fulfillArr.length > 0) {
 			promise._fulfillArr.forEach(function (k, index) {
 				asyncCall(dealThen, [promise, promise._childArr[index], k]);
 			});
@@ -165,8 +166,8 @@
 			return;
 		};
 
-		promise._result = reason;
 		promise._status = REJECTED;
+		promise._result = reason;
 
 		if (promise._rejectArr.length > 0) {
 			promise._rejectArr.forEach(function (k, index) {
