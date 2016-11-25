@@ -174,7 +174,6 @@
 			});
 		};
 	}
-	// 写一个函数统一处理
 
 	// 处理then
 	function dealThen(promise, child, x) {
@@ -270,9 +269,70 @@
 			reject(value);
 		});
 	};
-	// Promise.all = function(arr){
-	// 	let status = 'pending';
-	// }
+	Promise.all = function (arr) {
+		var newPormise = new Promise(noop),
+		    value = [],
+		    num = 0;
+		if ({}.toString.call(arr) === '[object Array]') {
+			try {
+				arr.forEach(function (k, index) {
+					if (k instanceof Promise) {
+						(function () {
+							var timer = setInterval(function () {
+								if (k._status == FULFILLED) {
+									value[index] = k._result;
+									num++;
+									clearInterval(timer);
+									if (num == arr.length) {
+										fulfill(newPormise, value);
+									};
+								} else if (k._status == REJECTED) {
+									reject(newPormise, k._result);
+									clearInterval(timer);
+								};
+							}, 0);
+						})();
+					} else {
+						value[index] = k;
+						num++;
+						if (num == arr.length) {
+							fulfill(newPormise, value);
+						};
+					}
+				});
+			} catch (e) {
+				reject(newPormise, e);
+			}
+		} else {
+			reject(newPormise, new TypeError('参数必须是一个promise数组'));
+		}
+		return newPormise;
+	};
+	Promise.race = function (arr) {
+		var newPormise = new Promise(noop);
+		if ({}.toString.call(arr) === '[object Array]') {
+			try {
+				arr.forEach(function (k, index) {
+					if (k instanceof Promise) {
+						var timer = setInterval(function () {
+							if (k._status == FULFILLED) {
+								fulfill(newPormise, k._result);
+							} else if (k._status == REJECTED) {
+								reject(newPormise, k._result);
+							};
+						}, 0);
+					} else {
+						fulfill(newPormise, value);
+					}
+				});
+			} catch (e) {
+				reject(newPormise, e);
+			}
+		} else {
+			reject(newPormise, new TypeError('参数必须是一个promise数组'));
+		}
+		return newPormise;
+	};
 	window.Promise = Promise;
 
 /***/ },
