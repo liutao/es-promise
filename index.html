@@ -38,25 +38,25 @@ function defer(){
 // })()
 
 // d.resolve({ dummy: "dummy" });
- // var d = defer();
- //            var isFulfilled = false;
+ var d = defer();
+            var isFulfilled = false;
 
- //            d.promise.then(function onFulfilled() {
- //                console.log(isFulfilled)
- //            });
+            d.promise.then(function onFulfilled() {
+                console.log(isFulfilled)
+            });
 
- //            setTimeout(function () {
- //                d.resolve({ dummy: "dummy" });
- //                isFulfilled = true;
- //            }, 50);
-var promise = Promise1.resolve({ dummy: "dummy" }).then(function () {
-			console.log(promise,'gsdg');
-            return promise;
-        });
-		console.log(promise);
-        promise.then(null, function (reason) {
-           console.log(reason);
-        });
+            setTimeout(function () {
+                d.resolve({ dummy: "dummy" });
+                isFulfilled = true;
+            }, 50);
+// var promise = Promise1.resolve({ dummy: "dummy" }).then(function () {
+// 			console.log(promise,'gsdg');
+//             return promise;
+//         });
+// 		console.log(promise);
+//         promise.then(null, function (reason) {
+//            console.log(reason);
+//         });
 
 </script>
 </body>

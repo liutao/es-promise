@@ -9,7 +9,9 @@ import {
 
 // 异步调用函数的方式，暂时只用setTimeout
 function asyncCall(fun,args){
-	setTimeout(fun.apply(null,args), 500)
+	setTimeout(()=>{
+		fun.apply(null, args);
+	}, 0)
 }
 
 function initPromise(promise, resolver){
