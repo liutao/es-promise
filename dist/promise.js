@@ -88,14 +88,13 @@
 			reject(promise, new TypeError('不可以resolve Promise实例本身'));
 			// 2.3.2 如果value是一个promise
 			// value为数字等时，value.constructor会报错
-			// } else if (value.constructor == Promise) {
 		} else if (value instanceof Promise) {
 			if (value._status == FULFILLED) {
 				fulfill(promise, value._result);
 			} else if (value._status == REJECTED) {
 				reject(promise, value._result);
 			} else {
-				resolve(promise, value);
+				asyncCall(resolve, [promise, value]);
 			}
 			// 2.3.3 如果x是一个object或function
 		} else if ((0, _utils.isObjectOrFunction)(value)) {
@@ -121,7 +120,6 @@
 	}
 
 	function handleThenable(promise, value, then) {
-		// setTimeout(()=>{
 		var settled = false; // 是否fulfilled或rejected
 		try {
 			then.call(value, function (otherValue) {
@@ -144,8 +142,6 @@
 			settled = true;
 			reject(promise, e);
 		}
-
-		// },0);
 	}
 
 	function fulfill(promise, value) {
@@ -182,12 +178,7 @@
 	function dealThen(promise, child, x) {
 		if ((0, _utils.isFunction)(x)) {
 			try {
-				// let value = x(promise._result)
-				if (promise._status == FULFILLED) {
-					resolve(child, x(promise._result));
-				} else {
-					reject(child, x(promise._result));
-				}
+				resolve(child, x(promise._result));
 			} catch (e) {
 				reject(child, e);
 			}

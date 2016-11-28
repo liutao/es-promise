@@ -38,26 +38,76 @@ function defer(){
 // })()
 
 // d.resolve({ dummy: "dummy" });
- var d = defer();
-            var isFulfilled = false;
+ // var d = defer();
+ //            var isFulfilled = false;
 
-            d.promise.then(function onFulfilled() {
-                console.log(isFulfilled)
-            });
+ //            d.promise.then(function onFulfilled() {
+ //                console.log(isFulfilled)
+ //            });
 
-            setTimeout(function () {
-                d.resolve({ dummy: "dummy" });
-                isFulfilled = true;
-            }, 50);
-// var promise = Promise1.resolve({ dummy: "dummy" }).then(function () {
-// 			console.log(promise,'gsdg');
+ //            setTimeout(function () {
+ //                d.resolve({ dummy: "dummy" });
+ //                isFulfilled = true;
+ //            }, 50);
+// var promise = Promise1.reject({ dummy: "dummy" }).then(null, function () {
 //             return promise;
 //         });
-// 		console.log(promise);
 //         promise.then(null, function (reason) {
 //            console.log(reason);
 //         });
 
+// function callbackAggregator(times, ultimateCallback) {
+//     var soFar = 0;
+//     return function () {
+//     	console.log(soFar);
+//         if (++soFar === times) {
+//             ultimateCallback();
+//         }
+//     };
+// }
+// var semiDone = callbackAggregator(3, function(){console.log('gagsgs');});
+
+// var promise = Promise1.resolve({ dummy: "dummy" });
+// promise.then(function () {
+//     return { sentinel: "sentinel" };
+// }).then(function (value) {
+// 	console.log(value);
+//     semiDone();
+// });
+// promise.then(function () {
+//     throw  { sentinel2: "sentinel2" };
+// }).then(null, function (reason) {
+// 	console.log(reason)
+//     semiDone();
+// });
+
+// promise.then(function () {
+//     return  { sentinel3: "sentinel3" };
+// }).then(function (value) {
+// 	console.log('sentinel3');
+//     semiDone();
+// });
+
+var promise = Promise1.resolve({ dummy: "dummy" }).then(()=>{
+	return defer().promise;
+})
+console.log(promise);
+ var wasFulfilled = false;
+var wasRejected = false;
+
+promise.then(
+    function onPromiseFulfilled() {
+        wasFulfilled = true;
+    },
+    function onPromiseRejected() {
+        wasRejected = true;
+    }
+);
+
+setTimeout(function () {
+    console.log(wasFulfilled);
+    console.log(wasRejected);
+}, 100);
 </script>
 </body>
 </html>
