@@ -327,7 +327,6 @@
 		}
 		return newPormise;
 	};
-	Promise.a = 'gag';
 
 	global.Promise1 = Promise;
 	// module.exports = Promise

@@ -247,7 +247,6 @@ Promise.race = function(arr){
 	}
 	return newPormise;
 }
-Promise.a = 'gag';
 
 global.Promise1 = Promise
 // module.exports = Promise
