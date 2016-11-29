@@ -2,7 +2,8 @@ var webpack = require('webpack')
 
 module.exports = {
   entry: {
-    'promise': './src/promise'
+    'promise': './src/promise',
+    'promise1': './src/promise1'
   },
   output: {
     path: './dist/',
