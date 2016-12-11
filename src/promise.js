@@ -267,8 +267,10 @@ Promise.race = function(arr){
 					let timer = setInterval(()=>{
 						if (k._status == FULFILLED) {
 							fulfill(newPormise, k._result);
+							clearInterval(timer);
 						} else if (k._status == REJECTED) {
 							reject(newPormise, k._result);
+							clearInterval(timer);
 						};
 					}, 0);
 				} else {
