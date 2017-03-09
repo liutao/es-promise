@@ -8,4 +8,15 @@ npm install
 
 npm run test
 
+写了几篇相关的文字。详细介绍了Promise
+
 [promise基础篇](http://wuguanshangshu.com/post/promise-base.html)
+
+[promise规范篇](http://wuguanshangshu.com/post/promise-specification.html)
+
+[promise实现篇](http://wuguanshangshu.com/post/promise-achieve.html)
+
+[promiseDeferred及jQuery篇](http://wuguanshangshu.com/post/promise-deferred.html)
+
+[promise异步篇](http://wuguanshangshu.com/post/promise-asyn.html)
+
