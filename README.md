@@ -7,3 +7,5 @@
 npm install
 
 npm run test
+
+[promise基础篇](http://wuguanshangshu.com/post/promise-base.html)
