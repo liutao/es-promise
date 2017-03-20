@@ -10,13 +10,13 @@ npm run test
 
 写了几篇相关的文字。详细介绍了Promise
 
-[promise基础篇](http://www.imliutao.com/post/promise-base.html)
+[promise基础篇](https://www.imliutao.com/post/promise-base.html)
 
-[promise规范篇](http://www.imliutao.com/post/promise-specification.html)
+[promise规范篇](https://www.imliutao.com/post/promise-specification.html)
 
-[promise实现篇](http://www.imliutao.com/post/promise-achieve.html)
+[promise实现篇](https://www.imliutao.com/post/promise-achieve.html)
 
-[promiseDeferred及jQuery篇](http://www.imliutao.com/post/promise-deferred.html)
+[promiseDeferred及jQuery篇](https://www.imliutao.com/post/promise-deferred.html)
 
-[promise异步篇](http://www.imliutao.com/post/promise-asyn.html)
+[promise异步篇](https://www.imliutao.com/post/promise-asyn.html)
 
